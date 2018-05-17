@@ -7,10 +7,10 @@
 
 const _ = require('lodash');
 
-export const Ranks = Object.freeze([ '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A' ]);
-export const Suits = Object.freeze([ 'hearts', 'clubs', 'diams', 'spades' ]);
+const Ranks = Object.freeze([ '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A' ]);
+const Suits = Object.freeze([ 'hearts', 'clubs', 'diams', 'spades' ]);
 
-const Cards = Object.freeze(Object.entries(Ranks).reduce(
+export const Cards = Object.freeze(Object.entries(Ranks).reduce(
   (cards, [ weight, rank ]) => cards.concat(Suits.map(suit => ({ rank, suit, weight }))),
   []
 ));

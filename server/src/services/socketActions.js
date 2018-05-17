@@ -18,18 +18,18 @@ class Socket {
         });
         let state = initialState;
         
-        io.on('connection', (socket) => {
+        io.on('connection', socket => {
 
-            if (++clients < 2) {
+            if (++clients <= 2) {
 
-                sockert.emit('table_is_joinable');
+                socket.emit('table_is_joinable');
 
             } else {
                 socket.emit('table_is_full');
                 socket.disconnect();
             }
 
-            socket.on('join', socket => {
+            socket.on('join', () => {
                 
                 state = state.updateIn(['players'], players => players.push(Map({
                     id: socket.id,
@@ -43,36 +43,14 @@ class Socket {
 
                     state = state.set('deck', _.shuffle(state.get('deck')));
                     state = state
-                        .setIn(['players', 0], _.slice(state.get('deck'), 0, 5))
-                        .setIn(['players', 1], _.slice(state.get('deck'), 5, 10))
+                        .setIn(['players', 0, 'hand'], _.slice(state.get('deck'), 0, 5))
+                        .setIn(['players', 1, 'hand'], _.slice(state.get('deck'), 5, 10))
                         .set('turn', 0)
                         .set('deckIndex', 10);
 
-                    io.sockets.connected[state.getIn(['players', 0]).id].emit('server_state', {
-                        turn: state.getIn(['players', state.get('turn')]).id,
-                        players: {
-                            me: {
-                                hand: state.getIn(['players', 0]).hand,
-                                money: state.getIn(['players', 0]).money
-                            },
-                            opponent: {
-                                money: state.getIn(['players', 1]).money
-                            }
-                        }
-                    });
+                    io.sockets.connected[state.getIn(['players', 0]).get('id')].emit('update_state', state);
 
-                    io.sockets.connected[state.getIn(['players', 1]).id].emit('server_state', {
-                        turn: state.getIn(['players', state.get('turn')]).id,
-                        players: {
-                            me: {
-                                hand: state.getIn(['players', 1]).hand,
-                                money: state.getIn(['players', 1]).money
-                            },
-                            opponent: {
-                                money: state.getIn(['players', 0]).money
-                            }
-                        }
-                    });
+                    io.sockets.connected[state.getIn(['players', 1]).get('id')].emit('update_state', state);
                                 
                 } else {
                     socket.emit('wait_for_opponent');
@@ -80,7 +58,7 @@ class Socket {
 
             });
 
-            socket.on('disconnect', socket => {
+            socket.on('disconnect', () => {
                 clients--;
                 state = initialState;
                 io.sockets.emit('restart');
