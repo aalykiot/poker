@@ -41,8 +41,8 @@ class Socket {
 
                 if (clients == 2) {
 
+                    state = state.set('deck', _.shuffle(state.get('deck')));
                     state = state
-                        .set('deck', _.shuffle(state.get('deck')))
                         .setIn(['players', 0], _.slice(state.get('deck'), 0, 5))
                         .setIn(['players', 1], _.slice(state.get('deck'), 5, 10))
                         .set('turn', 0)
