@@ -19,19 +19,16 @@ class SocketConnection {
             store.dispatch(lobby.setStatus('Joining table...'));
         });
 
-        socket.on('table_is_full', () => {
-            store.dispatch(lobby.setStatus('Table is full. Try again later...'));
-        });
-
-        socket.on('wait_for_opponent', () => {
-            store.dispatch(lobby.setStatus('Waiting for opponent to join. Please wait...'));
-        });
+        socket.on('status_update', (status) => {
+            store.dispatch(table.updateJoined(false));
+            store.dispatch(lobby.setStatus(status));
+        }); 
 
         socket.on('connect_error', () => {
             store.dispatch(lobby.setStatus('Can\'t connect to server...'));
         });
 
-        socket.on('restart', () => {
+        socket.on('rejoin', () => {
             socket.emit('join');
             store.dispatch(lobby.setStatus('Joining table...'));
         });

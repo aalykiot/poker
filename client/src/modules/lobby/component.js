@@ -7,7 +7,7 @@ const Lobby = ({
     joined 
 }) => {
 
-    return (joined) ? (
+    return (!joined) ? (
             <div className="lobby-container">
                 <div>
                     <div className="text">{status}</div>
