@@ -1,67 +1,71 @@
 import _ from 'lodash';
-import { Map, List } from 'immutable';
-
 import { Cards } from '../util/poker';
 
 class Socket {
 
     static actions(io) {
 
-        let clients = 0;
-        let initialState = Map({
+        let clients = [];
+        const initialState = Object.freeze({
             deck: Cards,
             deckIndex: 0,
             pot: 0,
             winner: null,
             turn: null,
-            players: List()
+            players: []
         });
-        let state = initialState;
+
+        let state = Object.assign({}, initialState);
         
         io.on('connection', socket => {
 
-            if (++clients <= 2) {
+            if (clients.length < 2) {
 
                 socket.emit('table_is_joinable');
 
             } else {
-                socket.emit('table_is_full');
+
+                socket.emit('status_update', 'Table is full. Try again later...');
                 socket.disconnect();
+
             }
 
             socket.on('join', () => {
-                
-                state = state.updateIn(['players'], players => players.push(Map({
+
+                clients.push(socket.id);
+
+                state.players = _.concat(state.players, {
                     id: socket.id,
                     next: false,
-                    hand: List(),
+                    hand: [],
                     money: 1500,
                     bet: 0
-                })));
+                });
 
-                if (clients == 2) {
+                if (clients.length === 2) {
 
-                    state = state.set('deck', _.shuffle(state.get('deck')));
-                    state = state
-                        .setIn(['players', 0, 'hand'], _.slice(state.get('deck'), 0, 5))
-                        .setIn(['players', 1, 'hand'], _.slice(state.get('deck'), 5, 10))
-                        .set('turn', 0)
-                        .set('deckIndex', 10);
+                    state.deck = _.shuffle(state.deck);
+                    state.players[0].hand = _.slice(state.deck, 0, 5);
+                    state.players[1].hand = _.slice(state.deck, 5, 10);
+                    state.turn = 0;
+                    state.deckIndex = 10;
 
-                    io.sockets.connected[state.getIn(['players', 0]).get('id')].emit('update_state', state);
-
-                    io.sockets.connected[state.getIn(['players', 1]).get('id')].emit('update_state', state);
+                    io.sockets.connected[clients[0]].emit('update_state', state);
+                    io.sockets.connected[clients[1]].emit('update_state', state);
                                 
                 } else {
-                    socket.emit('wait_for_opponent');
+                    socket.emit('status_update', 'Waiting for opponent to join. Please wait...');
                 }
 
             });
 
             socket.on('disconnect', () => {
-                clients--;
-                state = initialState;
-                io.sockets.emit('restart');
+                const isJoinedPlayer = clients.indexOf(socket.id);
+                if (isJoinedPlayer !== -1) {
+                    clients = [];
+                    state = Object.assign({}, initialState);
+                    io.sockets.emit('rejoin');
+                }
             });
 
         });
