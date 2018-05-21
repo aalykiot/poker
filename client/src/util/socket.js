@@ -11,6 +11,10 @@ class SocketConnection {
         const socket = this.socket;
 
         socket.on('update_state', data => {
+            console.log(data);
+        });
+
+        socket.on('joined', () => {
             store.dispatch(table.updateJoined(true));
         });
 
