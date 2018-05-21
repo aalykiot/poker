@@ -1,24 +1,18 @@
 import React from 'react';
-
+import Table from '../table/container';
 import '../../stylesheets/app.css';
 
 const Lobby = ({
     status,
-    joined 
+    joined
 }) => {
 
     return (!joined) ? (
             <div className="lobby-container">
-                <div>
-                    <div className="text">{status}</div>
-                </div>
+                  <div className="text">{ status }</div>
             </div>
     ) : (
-            <div className="lobby-container">
-                <div>
-                    <div className="text">This is the table area</div>
-                </div>
-            </div>
+            <Table/>
     );
 
 }

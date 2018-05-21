@@ -1,12 +1,9 @@
 import { Map, fromJS } from 'immutable';
 import {
-    UPDATE_JOINED,
     UPDATE_STATE
 } from './actions';
 
-const initialState = Map({
-    joined: false
-});
+const initialState = Map({});
 
 const reducer = (state = initialState, action) => {
 
@@ -15,9 +12,6 @@ const reducer = (state = initialState, action) => {
   switch (action.type) {
       case UPDATE_STATE:
         return state.mergeDeep(fromJS(data));
-
-      case UPDATE_JOINED:
-        return state.set('joined', data);
 
       default:
         return state;

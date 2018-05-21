@@ -1,6 +1,7 @@
 import io from 'socket.io-client';
 import * as lobby from '../modules/lobby/actions';
 import * as table from '../modules/table/actions';
+import * as player from '../modules/player/actions';
 
 class SocketConnection {
 
@@ -11,7 +12,8 @@ class SocketConnection {
         const socket = this.socket;
 
         socket.on('update_state', data => {
-            console.log(data);
+            store.dispatch(table.updateState(data.table));
+            store.dispatch(player.updateState(data.player));
         });
 
         socket.on('joined', () => {
@@ -26,7 +28,7 @@ class SocketConnection {
         socket.on('status_update', (status) => {
             store.dispatch(table.updateJoined(false));
             store.dispatch(lobby.setStatus(status));
-        }); 
+        });
 
         socket.on('connect_error', () => {
             store.dispatch(lobby.setStatus('Can\'t connect to server...'));

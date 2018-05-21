@@ -7,6 +7,8 @@ import registerServiceWorker from './registerServiceWorker';
 import reducers from './redux/reducers';
 import SocketConnection from './util/socket';
 import './stylesheets/index.css';
+import './stylesheets/app.css';
+import './stylesheets/cards.css';
 
 const store = createStore(reducers, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
 //const store = createStore(reducers);

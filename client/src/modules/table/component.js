@@ -1,12 +1,11 @@
 import React from 'react';
+import Player from '../player/container';
 
-const Table = ({
-    
-}) => {
+const Table = () => {
 
   return (
       <div className="container">
-          <h1>In table</h1>
+          <Player/>
       </div>
   );
 
