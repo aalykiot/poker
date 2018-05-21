@@ -1,11 +1,11 @@
 import _ from 'lodash';
 import { Cards } from '../util/poker';
+import { buildStateObject } from '../util/stateObjectBuilder';
 
 class Socket {
 
     static actions(io) {
 
-        let clients = [];
         const initialState = Object.freeze({
             deck: Cards,
             deckIndex: 0,
@@ -15,8 +15,12 @@ class Socket {
             players: []
         });
 
-        let state = Object.assign({}, initialState);
-        
+        let clients = [];
+        let state = {
+          ...initialState,
+          players: [ ...initialState.players ]
+        };
+
         io.on('connection', socket => {
 
             if (clients.length < 2) {
@@ -34,7 +38,7 @@ class Socket {
 
                 clients.push(socket.id);
 
-                state.players = _.concat(state.players, {
+                state.players.push({
                     id: socket.id,
                     next: false,
                     hand: [],
@@ -44,15 +48,17 @@ class Socket {
 
                 if (clients.length === 2) {
 
+                    io.sockets.emit('joined');
+
                     state.deck = _.shuffle(state.deck);
                     state.players[0].hand = _.slice(state.deck, 0, 5);
                     state.players[1].hand = _.slice(state.deck, 5, 10);
-                    state.turn = 0;
+                    state.turn = state.players[0].id;
                     state.deckIndex = 10;
 
-                    io.sockets.connected[clients[0]].emit('update_state', state);
-                    io.sockets.connected[clients[1]].emit('update_state', state);
-                                
+                    io.sockets.connected[clients[0]].emit('update_state', buildStateObject(state, 0));
+                    io.sockets.connected[clients[1]].emit('update_state', buildStateObject(state, 1));
+
                 } else {
                     socket.emit('status_update', 'Waiting for opponent to join. Please wait...');
                 }
@@ -63,7 +69,10 @@ class Socket {
                 const isJoinedPlayer = clients.indexOf(socket.id);
                 if (isJoinedPlayer !== -1) {
                     clients = [];
-                    state = Object.assign({}, initialState);
+                    state = {
+                      ...initialState,
+                      players: [ ...initialState.players ]
+                    };
                     io.sockets.emit('rejoin');
                 }
             });
