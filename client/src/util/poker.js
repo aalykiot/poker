@@ -57,42 +57,42 @@ export class PlayingCards {
 
   getWorstSingles() { return _.sortBy(_.flatten(this.getOfSameRank(1)), 'weight'); }
 
-  getHandRate(handRate) {
-    switch (handRate) {
+  getHandRate(type) {
+    switch (type) {
       case 'Full House':
         return {
-          handRate,
-          handWeight: _.flatten(this.rankTimes[3])[0].weight,
+          type,
+          weight: _.flatten(this.rankTimes[3])[0].weight,
         };
 
       case 'One Pair':
         return {
-          handRate,
-          handWeight: _.flatten(this.rankTimes[2])[0].weight,
+          type,
+          weight: _.flatten(this.rankTimes[2])[0].weight,
         };
 
       case 'Two Pair':
         return {
-          handRate,
-          handWeight: _.flatten(this.rankTimes[2])[2].weight,
+          type,
+          weight: _.flatten(this.rankTimes[2])[2].weight,
         };
 
       case 'Three of a Kind':
         return {
-          handRate,
-          handWeight: _.flatten(this.rankTimes[3])[0].weight,
+          type,
+          weight: _.flatten(this.rankTimes[3])[0].weight,
         };
 
       case 'Four of a Kind':
         return {
-          handRate,
-          handWeight: _.flatten(this.rankTimes[4])[0].weight,
+          type,
+          weight: _.flatten(this.rankTimes[4])[0].weight,
         };
 
       default:
         return {
-          handRate,
-          handWeight: this.ordCards[4].weight,
+          type,
+          weight: this.ordCards[4].weight,
         };
     }
   }
@@ -116,8 +116,9 @@ const PokerRating = {
 
 const PokerHandRate = playingCards => Object.entries(PokerRating).find(([rate, is]) => is(playingCards))[0];
 
-export const PokerResults = (cards) => {
-  const playingCards = new PlayingCards(cards);
+export const PokerHand = (cards) => {
+  const playingCards = new PlayingCards(cards.toJS());
+
   return playingCards.getHandRate(PokerHandRate(playingCards));
 };
 

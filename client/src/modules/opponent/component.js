@@ -15,11 +15,11 @@ class Opponent extends React.Component {
           suit={ card.get('suit') }
         />)
     ) : (
-      _.times(5, () => <div className="card back">*</div>)
+      _.times(5, index => <div key={index} className="card back">*</div>)
     );
 
     return (
-      <div className="playingCards simpleCards player-box">
+      <div className="playingCards simpleCards opponent-box">
         { handElement } <br/>
       </div>
     );
