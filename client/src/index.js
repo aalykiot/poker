@@ -6,7 +6,6 @@ import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 import reducers from './redux/reducers';
 import SocketConnection from './util/socket';
-import Lobby from './modules/lobby/container';
 import './stylesheets/index.css';
 import './stylesheets/app.css';
 import './stylesheets/cards.css';

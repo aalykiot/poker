@@ -1,4 +1,4 @@
-export const htmlEntitie = (suit) => {
+export default (suit) => {
   switch (suit) {
     case 'diams':
       return String.fromCharCode(9830);

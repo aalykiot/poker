@@ -39,8 +39,7 @@ class SocketConnection {
   }
 
   static emit() {
-    const socket = this.socket;
-    if (typeof socket === 'undefined') throw Error('Socket connection not open!');
+    if (typeof this.socket === 'undefined') throw Error('Socket connection not open!');
   }
 }
 

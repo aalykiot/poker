@@ -1,5 +1,5 @@
 import React from 'react';
-import { htmlEntitie } from '../../util/entities';
+import htmlEntitie from '../../util/entities';
 
 const Card = ({
   suit,
