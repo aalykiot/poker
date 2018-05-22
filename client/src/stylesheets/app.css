@@ -114,26 +114,39 @@
     font-family: Arial, Helvetica, sans-serif;
 }
 
+.input-box {
+  padding: 10px 20px;
+  margin: 12px 8px 0 8px;
+  font-size: 15pt;
+  border-radius: 10px;
+  opacity: 0.7;
+  color: #fff;
+  border: none;
+  background-color: rgb(0, 0, 0);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
 .lobby-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    color: #fff;
-    height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: #fff;
+  height: 100vh;
 }
 
 .text {
-    font-family: Arial, Helvetica, sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 .hud-display {
-    margin-top: 20px;
-    margin-bottom: 12px;
-    color: #fff;
+  margin-top: 20px;
+  margin-bottom: 12px;
+  color: #fff;
 }
 
 .hud-text {
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 10pt;
+  color: #fff;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12pt;
 }
