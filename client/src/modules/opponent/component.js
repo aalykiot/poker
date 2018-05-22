@@ -2,9 +2,9 @@ import React from 'react';
 import _ from 'lodash';
 import Card from '../card/container';
 
-class Player extends React.Component {
+class Opponent extends React.Component {
   render() {
-    const hand = this.props.player.get('hand');
+    const hand = this.props.opponent.get('hand');
 
     const handElement = (hand.size !== 0) ? (
       hand.map((card, index) =>
@@ -26,4 +26,4 @@ class Player extends React.Component {
   }
 }
 
-export default Player;
+export default Opponent;

@@ -5,7 +5,6 @@ import {
 
 const initialState = Map({
   hand: List([]),
-  selected: List([]),
 });
 
 const reducer = (state = initialState, action) => {

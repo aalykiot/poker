@@ -2,6 +2,7 @@ import io from 'socket.io-client';
 import * as lobby from '../modules/lobby/actions';
 import * as table from '../modules/table/actions';
 import * as player from '../modules/player/actions';
+import * as opponent from '../modules/opponent/actions';
 
 class SocketConnection {
   static open(endpoint, store) {
@@ -12,6 +13,7 @@ class SocketConnection {
     socket.on('update_state', (data) => {
       store.dispatch(table.updateState(data.table));
       store.dispatch(player.updateState(data.player));
+      store.dispatch(opponent.updateState(data.opponent));
     });
 
     socket.on('joined', () => {
