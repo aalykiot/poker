@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { Cards } from '../util/poker';
-import { buildStateObject } from '../util/stateObjectBuilder';
+import buildStateObject from '../util/stateObjectBuilder';
 
 class Socket {
 

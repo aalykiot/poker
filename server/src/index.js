@@ -12,5 +12,5 @@ const io = socketIO(httpServer);
 Socket.actions(io);
 
 httpServer.listen(PORT, () => {
-    console.log(`Server listening on port ${PORT}`);
+  console.log(`Server listening on port ${PORT}`);
 });
