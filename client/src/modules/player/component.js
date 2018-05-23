@@ -11,7 +11,7 @@ class Player extends React.Component {
       raiseValue: 0,
     };
     this.updateInput = this.updateInput.bind(this);
-    this.raise = this.raise.bind(this);
+    this.changeMode = this.changeMode.bind(this);
   }
 
   updateInput(event, money) {
@@ -23,8 +23,13 @@ class Player extends React.Component {
     }
   }
 
-  raise() {
-    this.props.dispatch(setMode('raising'));
+  changeMode() {
+    const bet = this.props.player.get('bet');
+    if (bet === 0) {
+      this.props.dispatch(setMode('raising'));
+    } else {
+      this.props.dispatch(setMode('selecting'));
+    }
   }
 
   render() {
@@ -35,6 +40,10 @@ class Player extends React.Component {
     const waiting = (this.props.turn === this.props.player.get('id'));
     const raising = (mode === 'raising');
     const selecting = (mode === 'selecting');
+
+    const raiseButton = <button className="option-button" onClick={this.changeMode}>Raise</button>;
+    const nextButton = <button className="option-button">Next</button>;
+    const foldButton = <button className="option-button">Fold</button>;
 
     const handElement = (hand.size !== 0) ? (
       hand.map((card, index) =>
@@ -63,10 +72,6 @@ class Player extends React.Component {
       value={this.state.raiseValue.toString()}
       placeholder="0"
     />;
-
-    const raiseButton = <button className="option-button" onClick={this.raise}>Raise</button>;
-    const nextButton = <button className="option-button">Next</button>;
-    const foldButton = <button className="option-button">Fold</button>;
 
     return (
       <div className="playingCards simpleCards player-box">
