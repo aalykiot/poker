@@ -32,7 +32,6 @@ class Socket {
 
         state.players.push({
           id: socket.id,
-          next: false,
           hand: [],
           money: 1500,
           bet: 0,
