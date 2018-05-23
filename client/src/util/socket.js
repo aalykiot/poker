@@ -35,8 +35,11 @@ class SocketConnection {
     });
 
     socket.on('rejoin', () => {
-      socket.emit('join');
+      store.dispatch(table.resetState());
+      store.dispatch(player.resetState());
+      store.dispatch(opponent.resetState());
       store.dispatch(lobby.setStatus('Joining table...'));
+      socket.emit('join');
     });
   }
 

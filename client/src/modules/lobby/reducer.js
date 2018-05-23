@@ -1,5 +1,8 @@
 import { Map } from 'immutable';
-import { UPDATE_STATUS } from './actions';
+import {
+  UPDATE_STATUS,
+  RESET,
+} from './actions';
 
 const initialState = Map({
   status: 'Connecting to server...',
@@ -10,6 +13,10 @@ const reducer = (state = initialState, action) => {
   switch (action.type) {
     case UPDATE_STATUS:
       return state.set('status', data);
+
+    case RESET:
+      return initialState;
+
     default:
       return state;
   }

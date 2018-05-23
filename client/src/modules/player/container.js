@@ -6,6 +6,6 @@ const mapStateToProps = state => ({
   turn: state.table.get('turn'),
 });
 
-const mapDispatchToProps = dispatch => ({});
+// const mapDispatchToProps = dispatch => ({});
 
-export default connect(mapStateToProps, mapDispatchToProps)(Player);
+export default connect(mapStateToProps)(Player);

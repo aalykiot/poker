@@ -1,6 +1,7 @@
 import { Map, List, fromJS } from 'immutable';
 import {
   UPDATE_STATE,
+  RESET,
 } from './actions';
 
 const initialState = Map({
@@ -13,6 +14,9 @@ const reducer = (state = initialState, action) => {
   switch (action.type) {
     case UPDATE_STATE:
       return state.mergeDeep(fromJS(data));
+
+    case RESET:
+      return initialState;
 
     default:
       return state;

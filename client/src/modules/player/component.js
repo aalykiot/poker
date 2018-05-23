@@ -2,13 +2,12 @@ import React from 'react';
 import _ from 'lodash';
 import Card from '../card/container';
 import { PokerHand } from '../../util/poker';
+import { setMode } from './actions';
 
 class Player extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      raising: false,
-      selecting: false,
       raiseValue: 0,
     };
     this.updateInput = this.updateInput.bind(this);
@@ -25,18 +24,17 @@ class Player extends React.Component {
   }
 
   raise() {
-    this.setState({ raising: true });
+    this.props.dispatch(setMode('raising'));
   }
 
   render() {
-    const {
-      raising,
-      selecting,
-    } = this.state;
-
-    const waiting = (this.props.turn === this.props.player.get('id'));
+    const mode = this.props.player.get('mode');
     const hand = this.props.player.get('hand');
     const money = this.props.player.get('money');
+
+    const waiting = (this.props.turn === this.props.player.get('id'));
+    const raising = (mode === 'raising');
+    const selecting = (mode === 'selecting');
 
     const handElement = (hand.size !== 0) ? (
       hand.map((card, index) =>
@@ -65,6 +63,7 @@ class Player extends React.Component {
       value={this.state.raiseValue.toString()}
       placeholder="0"
     />;
+
     const raiseButton = <button className="option-button" onClick={this.raise}>Raise</button>;
     const nextButton = <button className="option-button">Next</button>;
     const foldButton = <button className="option-button">Fold</button>;
@@ -74,11 +73,11 @@ class Player extends React.Component {
         {labelElement}<br/>
         {handElement} <br/><br/>
         {!raising && moneyElement}
-        {waiting && <span className="hud-text"> Waitting for opponent to play...</span>}
         {!waiting && raising && inputElement}
         {!waiting && raising && nextButton}
         {!waiting && !raising && !selecting && raiseButton}
         {!waiting && foldButton}
+        {waiting && <span className="hud-text"> Waitting for opponent to play...</span>}
       </div>
     );
   }

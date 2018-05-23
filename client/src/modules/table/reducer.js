@@ -2,6 +2,7 @@ import { Map, fromJS } from 'immutable';
 import {
   UPDATE_JOINED,
   UPDATE_STATE,
+  RESET,
 } from './actions';
 
 const initialState = Map({
@@ -17,6 +18,9 @@ const reducer = (state = initialState, action) => {
 
     case UPDATE_JOINED:
       return state.set('joined', data);
+
+    case RESET:
+      return initialState;
 
     default:
       return state;
