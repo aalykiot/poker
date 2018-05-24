@@ -9,7 +9,6 @@ class Socket {
       deckIndex: 0,
       pot: 0,
       winner: null,
-      turn: null,
       players: [],
     });
 
@@ -41,16 +40,30 @@ class Socket {
           io.sockets.emit('joined');
 
           state.deck = _.shuffle(state.deck);
-          state.players[0].hand = _.slice(state.deck, 0, 5);
-          state.players[1].hand = _.slice(state.deck, 5, 10);
-          state.turn = state.players[0].id;
           state.deckIndex = 10;
+          state.players[0].hand = _.slice(state.deck, 0, 5);
+          state.players[0].mode = 'idle';
+          state.players[1].hand = _.slice(state.deck, 5, 10);
+          state.players[1].mode = 'waiting';
 
           io.sockets.connected[clients[0]].emit('update_state', buildStateObject(state, 0));
           io.sockets.connected[clients[1]].emit('update_state', buildStateObject(state, 1));
         } else {
           socket.emit('status_update', 'Waiting for opponent to join. Please wait...');
         }
+      });
+
+      socket.on('bet', (bet) => {
+        const clientIndex = clients.indexOf(socket.id);
+
+        state.players[clientIndex].bet = parseInt(bet, 10);
+        state.players[clientIndex].money -= parseInt(bet, 10);
+        state.players[clientIndex].mode = 'waiting';
+        state.players[Math.abs(clientIndex - 1)].mode = 'idle';
+        state.pot += parseInt(bet, 10);
+
+        io.sockets.connected[clients[0]].emit('update_state', buildStateObject(state, 0));
+        io.sockets.connected[clients[1]].emit('update_state', buildStateObject(state, 1));
       });
 
       socket.on('disconnect', () => {
