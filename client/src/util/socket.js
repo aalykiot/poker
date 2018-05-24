@@ -4,8 +4,9 @@ import * as table from '../modules/table/actions';
 import * as player from '../modules/player/actions';
 import * as opponent from '../modules/opponent/actions';
 
-class SocketConnection {
-  static open(endpoint, store) {
+export default {
+  socket: undefined,
+  open: (endpoint, store) => {
     this.socket = io(endpoint);
 
     const socket = this.socket;
@@ -41,11 +42,10 @@ class SocketConnection {
       store.dispatch(lobby.setStatus('Joining table...'));
       socket.emit('join');
     });
-  }
+  },
 
-  static emit() {
+  emit: () => {
     if (typeof this.socket === 'undefined') throw Error('Socket connection not open!');
-  }
-}
+  },
 
-export default SocketConnection;
+};
