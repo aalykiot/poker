@@ -1,7 +1,10 @@
 import React from 'react';
 import Card from '../card/container';
 import { PokerHand } from '../../util/poker';
-import { setMode } from './actions';
+import {
+  setMode,
+  wait,
+} from './actions';
 
 class Player extends React.Component {
   constructor(props) {
@@ -36,7 +39,8 @@ class Player extends React.Component {
     const mode = this.props.player.get('mode');
     if (mode === 'raising') {
       this.props.emit('bet', this.state.raiseValue);
-      this.props.dispatch(setMode('waiting'));
+      this.props.dispatch(wait());
+      this.props.dispatch(setMode('selecting'));
     }
   }
 
@@ -44,8 +48,8 @@ class Player extends React.Component {
     const mode = this.props.player.get('mode');
     const hand = this.props.player.get('hand');
     const money = this.props.player.get('money');
+    const waiting = this.props.player.get('waiting');
 
-    const waiting = (mode === 'waiting');
     const raising = (mode === 'raising');
     const selecting = (mode === 'selecting');
 

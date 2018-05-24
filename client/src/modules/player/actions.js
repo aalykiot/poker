@@ -1,6 +1,7 @@
 export const UPDATE_STATE = 'UPDATE_PLAYER_STATE';
 export const SET_MODE = 'SET_MODE';
 export const RESET = 'RESET_PLAYER';
+export const WAIT = 'WAIT';
 
 export const updateState = state => ({
   type: UPDATE_STATE,
@@ -14,4 +15,8 @@ export const setMode = mode => ({
 
 export const resetState = () => ({
   type: RESET,
+});
+
+export const wait = () => ({
+  type: WAIT,
 });

@@ -3,12 +3,14 @@ import {
   UPDATE_STATE,
   SET_MODE,
   RESET,
+  WAIT,
 } from './actions';
 
 const initialState = Map({
   hand: List([]),
   selected: List([]),
-  mode: 'waiting',
+  waiting: true,
+  mode: 'idle',
 });
 
 const reducer = (state = initialState, action) => {
@@ -20,6 +22,9 @@ const reducer = (state = initialState, action) => {
 
     case SET_MODE:
       return state.set('mode', data);
+
+    case WAIT:
+      return state.set('waiting', true);
 
     case RESET:
       return initialState;
