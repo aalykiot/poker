@@ -122,6 +122,8 @@ export const PokerHand = (cards) => {
   return playingCards.getHandRate(PokerHandRate(playingCards));
 };
 
+export const hasAce = cards => new PlayingCards(cards.toJS()).hasAce();
+
 //
 // Max in a Row Utility
 //

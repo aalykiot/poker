@@ -2,6 +2,8 @@ import { Map, List, fromJS } from 'immutable';
 import {
   UPDATE_STATE,
   SET_MODE,
+  SELECT,
+  DESELECT,
   RESET,
   WAIT,
 } from './actions';
@@ -22,6 +24,15 @@ const reducer = (state = initialState, action) => {
 
     case SET_MODE:
       return state.set('mode', data);
+
+    case SELECT:
+      return state.update('selected', lst => lst.push(data));
+
+    case DESELECT:
+      return state.update('selected', lst => lst.filter((val) => {
+        if (val !== data) return true;
+        return false;
+      }));
 
     case WAIT:
       return state.set('waiting', true);

@@ -1,9 +1,11 @@
 import React from 'react';
 import Card from '../card/container';
-import { PokerHand } from '../../util/poker';
+import { PokerHand, hasAce } from '../../util/poker';
 import {
   setMode,
   wait,
+  selectCard,
+  deselectCard,
 } from './actions';
 
 class Player extends React.Component {
@@ -13,7 +15,8 @@ class Player extends React.Component {
       raiseValue: 0,
     };
     this.updateInput = this.updateInput.bind(this);
-    this.changeMode = this.changeMode.bind(this);
+    this.changeModeTo = this.changeModeTo.bind(this);
+    this.manageCard = this.manageCard.bind(this);
     this.next = this.next.bind(this);
   }
 
@@ -26,13 +29,8 @@ class Player extends React.Component {
     }
   }
 
-  changeMode() {
-    const bet = this.props.player.get('bet');
-    if (bet === 0) {
-      this.props.dispatch(setMode('raising'));
-    } else {
-      this.props.dispatch(setMode('selecting'));
-    }
+  changeModeTo(mode) {
+    this.props.dispatch(setMode(mode));
   }
 
   next() {
@@ -40,7 +38,21 @@ class Player extends React.Component {
     if (mode === 'raising') {
       this.props.emit('bet', this.state.raiseValue);
       this.props.dispatch(wait());
-      this.props.dispatch(setMode('selecting'));
+      this.changeModeTo('idle');
+    } else {
+      // Send request to for new cards (WIP)
+      this.changeModeTo('reasing');
+    }
+  }
+
+  manageCard(index, selected) {
+    if (this.props.player.mode !== 'selecting') return;
+    const limit = (hasAce(this.props.player.get('hand'))) ? 4 : 3;
+    const { size } = this.props.player.get('selected');
+    if (!selected) {
+      if (size < limit) this.props.dispatch(selectCard(index));
+    } else {
+      this.props.dispatch(deselectCard(index));
     }
   }
 
@@ -48,21 +60,29 @@ class Player extends React.Component {
     const mode = this.props.player.get('mode');
     const hand = this.props.player.get('hand');
     const money = this.props.player.get('money');
+    const bet = this.props.player.get('bet');
     const waiting = this.props.player.get('waiting');
 
     const raising = (mode === 'raising');
     const selecting = (mode === 'selecting');
 
-    const raiseButton = <button className="option-button" onClick={this.changeMode}>Raise</button>;
     const nextButton = <button className="option-button" onClick={this.next}>Next</button>;
     const foldButton = <button className="option-button">Fold</button>;
+
+    const actionButton = (mode === 'idle' && bet > 0) ? (
+      <button className="option-button" onClick={() => this.changeModeTo('selecting')}>Select</button>
+    ) : (
+      <button className="option-button" onClick={() => this.changeModeTo('raising')}>Raise</button>
+    );
 
     const handElement = hand.map((card, index) =>
         <Card
           key={index}
           index={index}
+          selected={this.props.player.get('selected').indexOf(index) >= 0}
           weight={card.get('rank')}
           suit={card.get('suit')}
+          manageCard={this.manageCard}
         />);
 
     const labelElement = (hand.size !== 0) ? (
@@ -87,8 +107,8 @@ class Player extends React.Component {
         {handElement} <br/><br/>
         {!raising && moneyElement}
         {!waiting && raising && inputElement}
-        {!waiting && raising && nextButton}
-        {!waiting && !raising && !selecting && raiseButton}
+        {!waiting && (raising || selecting) && nextButton}
+        {!waiting && !raising && !selecting && actionButton}
         {!waiting && foldButton}
         {waiting && <span className="hud-text"> Waitting for opponent to play...</span>}
       </div>

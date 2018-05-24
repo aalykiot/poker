@@ -1,6 +1,8 @@
 export const UPDATE_STATE = 'UPDATE_PLAYER_STATE';
 export const SET_MODE = 'SET_MODE';
 export const RESET = 'RESET_PLAYER';
+export const SELECT = 'SELECT_CARD';
+export const DESELECT = 'DESELECT_CARD';
 export const WAIT = 'WAIT';
 
 export const updateState = state => ({
@@ -11,6 +13,16 @@ export const updateState = state => ({
 export const setMode = mode => ({
   type: SET_MODE,
   payload: mode,
+});
+
+export const selectCard = index => ({
+  type: SELECT,
+  payload: index,
+});
+
+export const deselectCard = index => ({
+  type: DESELECT,
+  payload: index,
 });
 
 export const resetState = () => ({
