@@ -42,9 +42,9 @@ class Socket {
           state.deck = _.shuffle(state.deck);
           state.deckIndex = 10;
           state.players[0].hand = _.slice(state.deck, 0, 5);
-          state.players[0].mode = 'idle';
+          state.players[0].waiting = false;
           state.players[1].hand = _.slice(state.deck, 5, 10);
-          state.players[1].mode = 'waiting';
+          state.players[1].waiting = true;
 
           io.sockets.connected[clients[0]].emit('update_state', buildStateObject(state, 0));
           io.sockets.connected[clients[1]].emit('update_state', buildStateObject(state, 1));
@@ -58,8 +58,8 @@ class Socket {
 
         state.players[clientIndex].bet = parseInt(bet, 10);
         state.players[clientIndex].money -= parseInt(bet, 10);
-        state.players[clientIndex].mode = 'waiting';
-        state.players[Math.abs(clientIndex - 1)].mode = 'idle';
+        state.players[clientIndex].waiting = true;
+        state.players[Math.abs(clientIndex - 1)].waiting = false;
         state.pot += parseInt(bet, 10);
 
         io.sockets.connected[clients[0]].emit('update_state', buildStateObject(state, 0));

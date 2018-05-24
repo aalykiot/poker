@@ -6,7 +6,7 @@ export default (state, index, opponentHand = false) => ({
   player: { ...state.players[index] },
   opponent: {
     ...state.players[Math.abs(index - 1)],
-    mode: undefined,
+    waiting: undefined,
     hand: (opponentHand === true) ? state.players.hand[Math.abs(index - 1)] : [],
   },
 });
