@@ -1,5 +1,4 @@
 import React from 'react';
-import _ from 'lodash';
 import Card from '../card/container';
 import { PokerHand } from '../../util/poker';
 import { setMode } from './actions';
@@ -12,6 +11,7 @@ class Player extends React.Component {
     };
     this.updateInput = this.updateInput.bind(this);
     this.changeMode = this.changeMode.bind(this);
+    this.handleNext = this.handleNext.bind(this);
   }
 
   updateInput(event, money) {
@@ -32,6 +32,10 @@ class Player extends React.Component {
     }
   }
 
+  handleNext() {
+    this.props.dispatch(setMode('idle'));
+  }
+
   render() {
     const mode = this.props.player.get('mode');
     const hand = this.props.player.get('hand');
@@ -42,20 +46,16 @@ class Player extends React.Component {
     const selecting = (mode === 'selecting');
 
     const raiseButton = <button className="option-button" onClick={this.changeMode}>Raise</button>;
-    const nextButton = <button className="option-button">Next</button>;
+    const nextButton = <button className="option-button" onClick={this.handleNext}>Next</button>;
     const foldButton = <button className="option-button">Fold</button>;
 
-    const handElement = (hand.size !== 0) ? (
-      hand.map((card, index) =>
+    const handElement = hand.map((card, index) =>
         <Card
           key={index}
           index={index}
           weight={card.get('rank')}
           suit={card.get('suit')}
-        />)
-    ) : (
-      _.times(5, index => <div key={index} className="card back">*</div>)
-    );
+        />);
 
     const labelElement = (hand.size !== 0) ? (
       <span className="result">{PokerHand(hand).type}</span>
