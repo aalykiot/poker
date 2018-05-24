@@ -44,8 +44,9 @@ export default {
     });
   },
 
-  emit: () => {
+  emit: (type, data) => {
     if (typeof this.socket === 'undefined') throw Error('Socket connection not open!');
+    this.socket.emit(type, data);
   },
 
 };

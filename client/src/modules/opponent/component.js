@@ -5,6 +5,7 @@ import Card from '../card/container';
 class Opponent extends React.Component {
   render() {
     const hand = this.props.opponent.get('hand');
+    const money = this.props.opponent.get('money');
 
     const handElement = (hand.size !== 0) ? (
       hand.map((card, index) =>
@@ -18,9 +19,12 @@ class Opponent extends React.Component {
       _.times(5, index => <div key={index} className="card back">*</div>)
     );
 
+    const labelElement = <span className="result-opponent">{money} $</span>;
+
     return (
       <div className="playingCards simpleCards opponent-box">
-        { handElement } <br/>
+        {handElement} <br/>
+        {labelElement}
       </div>
     );
   }

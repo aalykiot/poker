@@ -11,7 +11,7 @@ class Player extends React.Component {
     };
     this.updateInput = this.updateInput.bind(this);
     this.changeMode = this.changeMode.bind(this);
-    this.handleNext = this.handleNext.bind(this);
+    this.next = this.next.bind(this);
   }
 
   updateInput(event, money) {
@@ -32,8 +32,12 @@ class Player extends React.Component {
     }
   }
 
-  handleNext() {
-    this.props.dispatch(setMode('idle'));
+  next() {
+    const mode = this.props.player.get('mode');
+    if (mode === 'raising') {
+      this.props.emit('bet', this.state.raiseValue);
+      this.props.dispatch(setMode('waiting'));
+    }
   }
 
   render() {
@@ -41,12 +45,12 @@ class Player extends React.Component {
     const hand = this.props.player.get('hand');
     const money = this.props.player.get('money');
 
-    const waiting = (this.props.turn === this.props.player.get('id'));
+    const waiting = (mode === 'waiting');
     const raising = (mode === 'raising');
     const selecting = (mode === 'selecting');
 
     const raiseButton = <button className="option-button" onClick={this.changeMode}>Raise</button>;
-    const nextButton = <button className="option-button" onClick={this.handleNext}>Next</button>;
+    const nextButton = <button className="option-button" onClick={this.next}>Next</button>;
     const foldButton = <button className="option-button">Fold</button>;
 
     const handElement = hand.map((card, index) =>

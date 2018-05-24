@@ -8,7 +8,7 @@ import {
 const initialState = Map({
   hand: List([]),
   selected: List([]),
-  mode: 'idle',
+  mode: 'waiting',
 });
 
 const reducer = (state = initialState, action) => {
