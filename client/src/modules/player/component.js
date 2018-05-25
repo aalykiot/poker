@@ -1,5 +1,5 @@
 import React from 'react';
-import Card from '../card/container';
+import Card from '../../components/card';
 import { PokerHand, hasAce } from '../../util/poker';
 
 class Player extends React.Component {

@@ -1,6 +1,6 @@
 import React from 'react';
 import _ from 'lodash';
-import Card from '../card/container';
+import Card from '../../components/card';
 
 class Opponent extends React.Component {
   render() {
