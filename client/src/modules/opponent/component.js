@@ -1,6 +1,7 @@
 import React from 'react';
 import _ from 'lodash';
 import Card from '../../components/card';
+import { PokerHand } from '../../util/poker';
 
 class Opponent extends React.Component {
   render() {
@@ -19,7 +20,11 @@ class Opponent extends React.Component {
       _.times(5, index => <div key={index} className="card back">*</div>)
     );
 
-    const labelElement = <span className="result-opponent">{money} $</span>;
+    const labelElement = (hand.size === 0) ? (
+      <span className="result-opponent">{money} $</span>
+    ) : (
+      <span className="result-opponent">{PokerHand(hand).type}</span>
+    );
 
     return (
       <div className="playingCards simpleCards opponent-box">

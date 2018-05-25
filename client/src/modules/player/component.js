@@ -92,6 +92,18 @@ class Player extends React.Component {
       placeholder="0"
     />;
 
+    const renderWinnerElement = () => {
+      const { winner } = this.props;
+      switch (winner) {
+        case 'None':
+          return (<span className="hud-text"> Looks like a tie!</span>);
+        case this.props.player.get('id'):
+          return (<span className="hud-text"> Congratulations you win!</span>);
+        default:
+          return (<span className="hud-text"> So sorry! Opponent beat you :(</span>);
+      }
+    };
+
     return (
       <div className="playingCards simpleCards player-box">
         {labelElement}<br/>
@@ -101,7 +113,10 @@ class Player extends React.Component {
         {!this.props.waiting && (raising || selecting) && nextButton}
         {!this.props.waiting && !raising && !selecting && actionButton}
         {!this.props.waiting && foldButton}
-        {this.props.waiting && <span className="hud-text"> Waiting for opponent to play...</span>}
+        {this.props.waiting && !this.props.winner
+          && <span className="hud-text"> Waiting for opponent to play...</span>
+        }
+        {this.props.winner && renderWinnerElement()}
       </div>
     );
   }
