@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import { Cards } from '../util/poker';
 import buildStateObject from '../util/stateObjectBuilder';
+import getWinner from '../util/winner';
 
 class Socket {
   static actions(io) {
@@ -10,6 +11,7 @@ class Socket {
       pot: 0,
       winner: null,
       players: [],
+      roundTrips: 0,
     });
 
     let clients = [];
@@ -54,13 +56,17 @@ class Socket {
       });
 
       socket.on('bet', (bet) => {
+        state.roundTrips += 1;
+
+        const winner = (state.roundTrips === 4) ? getWinner(state.players) : null;
         const clientIndex = clients.indexOf(socket.id);
 
         state.players[clientIndex].bet = parseInt(bet, 10);
         state.players[clientIndex].money -= parseInt(bet, 10);
         state.players[clientIndex].waiting = true;
-        state.players[Math.abs(clientIndex - 1)].waiting = false;
+        state.players[Math.abs(clientIndex - 1)].waiting = (winner !== null);
         state.pot += parseInt(bet, 10);
+        state.winner = (winner !== -1) ? clients[winner] : 'None';
 
         io.sockets.connected[clients[0]].emit('update_state', buildStateObject(state, 0));
         io.sockets.connected[clients[1]].emit('update_state', buildStateObject(state, 1));

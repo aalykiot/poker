@@ -101,7 +101,7 @@ class Player extends React.Component {
         {!this.props.waiting && (raising || selecting) && nextButton}
         {!this.props.waiting && !raising && !selecting && actionButton}
         {!this.props.waiting && foldButton}
-        {this.props.waiting && <span className="hud-text"> Waitting for opponent to play...</span>}
+        {this.props.waiting && <span className="hud-text"> Waiting for opponent to play...</span>}
       </div>
     );
   }

@@ -17,6 +17,7 @@ const mapStateToProps = state => ({
   money: state.player.get('money'),
   bet: state.player.get('bet'),
   waiting: state.player.get('waiting'),
+  winner: state.table.get('winner'),
 });
 
 const mapDispatchToProps = dispatch => ({
