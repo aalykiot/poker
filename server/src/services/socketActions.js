@@ -68,8 +68,8 @@ class Socket {
         state.pot += parseInt(bet, 10);
         state.winner = (winner !== -1) ? clients[winner] : 'None';
 
-        io.sockets.connected[clients[0]].emit('update_state', buildStateObject(state, 0));
-        io.sockets.connected[clients[1]].emit('update_state', buildStateObject(state, 1));
+        io.sockets.connected[clients[0]].emit('update_state', buildStateObject(state, 0, winner));
+        io.sockets.connected[clients[1]].emit('update_state', buildStateObject(state, 1, winner));
       });
 
       socket.on('replace', (cards) => {
