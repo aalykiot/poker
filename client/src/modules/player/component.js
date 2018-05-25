@@ -14,6 +14,7 @@ class Player extends React.Component {
     this.state = {
       raiseValue: 0,
     };
+
     this.updateInput = this.updateInput.bind(this);
     this.changeModeTo = this.changeModeTo.bind(this);
     this.manageCard = this.manageCard.bind(this);
@@ -34,21 +35,22 @@ class Player extends React.Component {
   }
 
   next() {
-    const mode = this.props.player.get('mode');
-    if (mode === 'raising') {
+    if (this.props.mode === 'raising') {
+      if (this.state.raiseValue === 0) return;
       this.props.emit('bet', this.state.raiseValue);
+      this.setState({ raiseValue: 0 });
       this.props.dispatch(wait());
       this.changeModeTo('idle');
     } else {
-      // Send request to for new cards (WIP)
+      // Send request to server for new cards (WIP)
       this.changeModeTo('reasing');
     }
   }
 
   manageCard(index, selected) {
-    if (this.props.player.mode !== 'selecting') return;
-    const limit = (hasAce(this.props.player.get('hand'))) ? 4 : 3;
-    const { size } = this.props.player.get('selected');
+    if (this.props.mode !== 'selecting') return;
+    const limit = (hasAce(this.props.hand)) ? 4 : 3;
+    const { size } = this.props.selected;
     if (!selected) {
       if (size < limit) this.props.dispatch(selectCard(index));
     } else {
@@ -57,46 +59,40 @@ class Player extends React.Component {
   }
 
   render() {
-    const mode = this.props.player.get('mode');
-    const hand = this.props.player.get('hand');
-    const money = this.props.player.get('money');
-    const bet = this.props.player.get('bet');
-    const waiting = this.props.player.get('waiting');
-
-    const raising = (mode === 'raising');
-    const selecting = (mode === 'selecting');
+    const raising = (this.props.mode === 'raising');
+    const selecting = (this.props.mode === 'selecting');
 
     const nextButton = <button className="option-button" onClick={this.next}>Next</button>;
     const foldButton = <button className="option-button">Fold</button>;
 
-    const actionButton = (mode === 'idle' && bet > 0) ? (
+    const actionButton = (this.props.mode === 'idle' && this.props.bet > 0) ? (
       <button className="option-button" onClick={() => this.changeModeTo('selecting')}>Select</button>
     ) : (
       <button className="option-button" onClick={() => this.changeModeTo('raising')}>Raise</button>
     );
 
-    const handElement = hand.map((card, index) =>
+    const handElement = this.props.hand.map((card, index) =>
         <Card
           key={index}
           index={index}
-          selected={this.props.player.get('selected').indexOf(index) >= 0}
+          selected={this.props.selected.indexOf(index) >= 0}
           weight={card.get('rank')}
           suit={card.get('suit')}
           manageCard={this.manageCard}
         />);
 
-    const labelElement = (hand.size !== 0) ? (
-      <span className="result">{PokerHand(hand).type}</span>
+    const labelElement = (this.props.hand.size !== 0) ? (
+      <span className="result">{PokerHand(this.props.hand).type}</span>
     ) : (
       <span className="result"></span>
     );
 
-    const moneyElement = <span className="bet-box">{money} $</span>;
+    const moneyElement = <span className="bet-box">{this.props.money} $</span>;
 
     const inputElement = <input
       type="text"
       className="input-box"
-      onChange={event => this.updateInput(event, money)}
+      onChange={event => this.updateInput(event, this.props.money)}
       value={this.state.raiseValue.toString()}
       placeholder="0"
     />;
@@ -106,11 +102,11 @@ class Player extends React.Component {
         {labelElement}<br/>
         {handElement} <br/><br/>
         {!raising && moneyElement}
-        {!waiting && raising && inputElement}
-        {!waiting && (raising || selecting) && nextButton}
-        {!waiting && !raising && !selecting && actionButton}
-        {!waiting && foldButton}
-        {waiting && <span className="hud-text"> Waitting for opponent to play...</span>}
+        {!this.props.waiting && raising && inputElement}
+        {!this.props.waiting && (raising || selecting) && nextButton}
+        {!this.props.waiting && !raising && !selecting && actionButton}
+        {!this.props.waiting && foldButton}
+        {this.props.waiting && <span className="hud-text"> Waitting for opponent to play...</span>}
       </div>
     );
   }
