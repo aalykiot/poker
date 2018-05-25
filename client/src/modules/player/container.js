@@ -1,6 +1,13 @@
 import { connect } from 'react-redux';
 import Player from './component';
 import socketConnection from '../../util/socket';
+import {
+  setMode,
+  wait,
+  selectCard,
+  deselectCard,
+  clearSelected,
+} from './actions';
 
 const mapStateToProps = state => ({
   player: state.player,
@@ -14,6 +21,11 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   dispatch,
+  setMode,
+  wait,
+  selectCard,
+  deselectCard,
+  clearSelected,
   emit: socketConnection.emit,
 });
 

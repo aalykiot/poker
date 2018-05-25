@@ -4,6 +4,7 @@ import {
   SET_MODE,
   SELECT,
   DESELECT,
+  CLEAR_SELECTED,
   RESET,
   WAIT,
 } from './actions';
@@ -33,6 +34,9 @@ const reducer = (state = initialState, action) => {
         if (val !== data) return true;
         return false;
       }));
+
+    case CLEAR_SELECTED:
+      return state.set('selected', List([]));
 
     case WAIT:
       return state.set('waiting', true);

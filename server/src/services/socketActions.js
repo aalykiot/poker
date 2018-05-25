@@ -66,6 +66,23 @@ class Socket {
         io.sockets.connected[clients[1]].emit('update_state', buildStateObject(state, 1));
       });
 
+      socket.on('replace', (cards) => {
+        const clientIndex = clients.indexOf(socket.id);
+        const { hand } = state.players[clientIndex];
+        const reducedHand = _.filter(hand, (card, index) => {
+          if (_.indexOf(cards, index) === -1) return true;
+          return false;
+        });
+        state.players[clientIndex].hand = _.concat(
+          reducedHand,
+          _.slice(state.deck, state.deckIndex, state.deckIndex + cards.length),
+        );
+        state.deckIndex += cards.length;
+        socket.emit('update_state', {
+          player: { hand: state.players[clientIndex].hand },
+        });
+      });
+
       socket.on('disconnect', () => {
         const isJoinedPlayer = clients.indexOf(socket.id);
         if (isJoinedPlayer !== -1) {

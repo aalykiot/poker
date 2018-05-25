@@ -1,12 +1,6 @@
 import React from 'react';
 import Card from '../card/container';
 import { PokerHand, hasAce } from '../../util/poker';
-import {
-  setMode,
-  wait,
-  selectCard,
-  deselectCard,
-} from './actions';
 
 class Player extends React.Component {
   constructor(props) {
@@ -31,7 +25,7 @@ class Player extends React.Component {
   }
 
   changeModeTo(mode) {
-    this.props.dispatch(setMode(mode));
+    this.props.dispatch(this.props.setMode(mode));
   }
 
   next() {
@@ -39,11 +33,12 @@ class Player extends React.Component {
       if (this.state.raiseValue === 0) return;
       this.props.emit('bet', this.state.raiseValue);
       this.setState({ raiseValue: 0 });
-      this.props.dispatch(wait());
+      this.props.dispatch(this.props.wait());
       this.changeModeTo('idle');
     } else {
-      // Send request to server for new cards (WIP)
-      this.changeModeTo('reasing');
+      this.props.emit('replace', this.props.selected.toJS());
+      this.props.dispatch(this.props.clearSelected());
+      this.changeModeTo('raising');
     }
   }
 
@@ -52,9 +47,9 @@ class Player extends React.Component {
     const limit = (hasAce(this.props.hand)) ? 4 : 3;
     const { size } = this.props.selected;
     if (!selected) {
-      if (size < limit) this.props.dispatch(selectCard(index));
+      if (size < limit) this.props.dispatch(this.props.selectCard(index));
     } else {
-      this.props.dispatch(deselectCard(index));
+      this.props.dispatch(this.props.deselectCard(index));
     }
   }
 
