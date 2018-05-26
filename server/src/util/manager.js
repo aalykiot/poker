@@ -3,7 +3,6 @@ import { Cards } from './poker';
 
 class Manager {
   constructor() {
-    this.clients = List([]);
     this.initialState = Map({
       clients: List([]),
       deck: fromJS(Cards),
