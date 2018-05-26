@@ -10,7 +10,7 @@ const Card = ({
 }) => (
     <div
       className={`card ${suit} ${selected ? 'selected' : ''}`}
-      onClick={() => { if (typeof manageCard !== 'undefined') manageCard(index, selected); }}
+      onClick={() => { if (manageCard) manageCard(index, selected); }}
     >
       <span className="rank">{ weight }</span>
       <span className="suit">{ htmlEntitie(suit) }</span>

@@ -95,11 +95,21 @@
     margin: 12px 8px 0 8px;
     font-size: 13pt;
     border-radius: 10px;
-    opacity: 0.7;
+    opacity: 0.8;
+    box-shadow: 1px 1px #2d3436;
+    color: #2d3436;
+    outline: none;
 }
 
 .option-button:hover {
+    opacity: 1;
     cursor: pointer;
+}
+
+.option-button:active {
+    opacity: 0.7;
+    cursor: pointer;
+    box-shadow: -1px -1px #2d3436;
 }
 
 .bet-box {
@@ -123,6 +133,7 @@
   border: none;
   background-color: rgb(0, 0, 0);
   font-family: Arial, Helvetica, sans-serif;
+  outline: none;
 }
 
 .lobby-container {
