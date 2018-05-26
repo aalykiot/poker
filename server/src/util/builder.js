@@ -1,4 +1,4 @@
-export default (state, index, render = null) => ({
+export default (state, index, send = null) => ({
   table: {
     pot: state.pot,
     winner: state.winner,
@@ -7,6 +7,6 @@ export default (state, index, render = null) => ({
   opponent: {
     ...state.players[Math.abs(index - 1)],
     waiting: undefined,
-    hand: (render !== null) ? state.players[Math.abs(index - 1)].hand : [],
+    hand: (send !== null) ? state.players[Math.abs(index - 1)].hand : [],
   },
 });
