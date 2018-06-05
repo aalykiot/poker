@@ -53,7 +53,10 @@ class Manager {
               .update('bet', bet => bet + parseInt(payload.bet, 10))
               .update('money', money => money - parseInt(payload.bet, 10))
               .set('waiting', true))
-          .updateIn(['players', Math.abs(payload.index - 1)], player => player.set('waiting', false))
+          .updateIn(
+            ['players', Math.abs(payload.index - 1)],
+            player => player.set('waiting', (this.state.get('roundTrips') >= 3)),
+          )
           .update('pot', pot => pot + payload.bet)
           .update('roundTrips', trips => trips + 1);
 
@@ -62,9 +65,8 @@ class Manager {
           player.update('hand', hand => hand.filter((card, i) => {
             if (payload.cards.indexOf(i) === -1) return true;
             return false;
-          })
-            .concat(this.state.get('deck')
-              .slice(this.state.get('deckIndex'), this.state.get('deckIndex') + payload.cards.length))))
+          }).concat(this.state.get('deck')
+            .slice(this.state.get('deckIndex'), this.state.get('deckIndex') + payload.cards.length))))
           .update('deckIndex', val => val + payload.cards.length);
 
 
