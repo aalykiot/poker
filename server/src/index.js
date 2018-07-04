@@ -1,7 +1,7 @@
 import express from 'express';
 import http from 'http';
 import socketIO from 'socket.io';
-import socket from './services/socket';
+import socket from './network/socket';
 
 const PORT = 8080;
 const app = express();
