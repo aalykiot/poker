@@ -2,124 +2,101 @@ import React from 'react';
 import Card from '../../components/card';
 import { PokerHand, hasAce } from '../../util/poker';
 
-class Player extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      raiseValue: 0,
-    };
+const Player = (props) => {
+  const changeModeTo = (mode) => {
+    props.dispatch(props.setMode(mode));
+  };
 
-    this.updateInput = this.updateInput.bind(this);
-    this.changeModeTo = this.changeModeTo.bind(this);
-    this.manageCard = this.manageCard.bind(this);
-    this.next = this.next.bind(this);
-  }
-
-  updateInput(event, money) {
-    const val = (event.target.value === '') ? 0 : parseInt(event.target.value, 10);
-    if (val >= money) {
-      this.setState({ raiseValue: money });
+  const next = () => {
+    if (props.mode === 'raising') {
+      if (props.raiseValue === 0) return;
+      props.emit('bet', props.raiseValue);
+      props.clearValue();
+      props.dispatch(props.wait());
+      changeModeTo('idle');
     } else {
-      this.setState({ raiseValue: val });
+      props.emit('replace', props.selected.toJS());
+      props.dispatch(props.clearSelected());
+      changeModeTo('raising');
     }
-  }
+  };
 
-  changeModeTo(mode) {
-    this.props.dispatch(this.props.setMode(mode));
-  }
-
-  next() {
-    if (this.props.mode === 'raising') {
-      if (this.state.raiseValue === 0) return;
-      this.props.emit('bet', this.state.raiseValue);
-      this.setState({ raiseValue: 0 });
-      this.props.dispatch(this.props.wait());
-      this.changeModeTo('idle');
-    } else {
-      this.props.emit('replace', this.props.selected.toJS());
-      this.props.dispatch(this.props.clearSelected());
-      this.changeModeTo('raising');
-    }
-  }
-
-  manageCard(index, selected) {
-    if (this.props.mode !== 'selecting') return;
-    const limit = (hasAce(this.props.hand)) ? 4 : 3;
-    const { size } = this.props.selected;
+  const manageCard = (index, selected) => {
+    if (props.mode !== 'selecting') return;
+    const limit = (hasAce(props.hand)) ? 4 : 3;
+    const { size } = props.selected;
     if (!selected) {
-      if (size < limit) this.props.dispatch(this.props.selectCard(index));
+      if (size < limit) props.dispatch(props.selectCard(index));
     } else {
-      this.props.dispatch(this.props.deselectCard(index));
+      props.dispatch(props.deselectCard(index));
     }
-  }
+  };
 
-  render() {
-    const raising = (this.props.mode === 'raising');
-    const selecting = (this.props.mode === 'selecting');
+  const raising = (props.mode === 'raising');
+  const selecting = (props.mode === 'selecting');
 
-    const nextButton = <button className="option-button" onClick={this.next}>Next</button>;
-    const foldButton = <button className="option-button">Fold</button>;
+  const nextButton = <button className="option-button" onClick={next}>Next</button>;
+  const foldButton = <button className="option-button">Fold</button>;
 
-    const actionButton = (this.props.mode === 'idle' && this.props.bet > 0) ? (
-      <button className="option-button" onClick={() => this.changeModeTo('selecting')}>Select</button>
-    ) : (
-      <button className="option-button" onClick={() => this.changeModeTo('raising')}>Raise</button>
-    );
+  const actionButton = (props.mode === 'idle' && props.bet > 0) ? (
+    <button className="option-button" onClick={() => changeModeTo('selecting')}>Select</button>
+  ) : (
+    <button className="option-button" onClick={() => changeModeTo('raising')}>Raise</button>
+  );
 
-    const handElement = this.props.hand.map((card, index) =>
-        <Card
-          key={index}
-          index={index}
-          selected={this.props.selected.indexOf(index) >= 0}
-          weight={card.get('rank')}
-          suit={card.get('suit')}
-          manageCard={this.manageCard}
-        />);
+  const handElement = props.hand.map((card, index) =>
+      <Card
+        key={index}
+        index={index}
+        selected={props.selected.indexOf(index) >= 0}
+        weight={card.get('rank')}
+        suit={card.get('suit')}
+        manageCard={manageCard}
+      />);
 
-    const labelElement = (this.props.hand.size !== 0) ? (
-      <span className="result">{PokerHand(this.props.hand).type}</span>
-    ) : (
-      <span className="result"></span>
-    );
+  const labelElement = (props.hand.size !== 0) ? (
+    <span className="result">{PokerHand(props.hand).type}</span>
+  ) : (
+    <span className="result"></span>
+  );
 
-    const moneyElement = <span className="bet-box">{this.props.money} $</span>;
+  const moneyElement = <span className="bet-box">{props.money} $</span>;
 
-    const inputElement = <input
-      type="text"
-      className="input-box"
-      onChange={event => this.updateInput(event, this.props.money)}
-      value={this.state.raiseValue.toString()}
-      placeholder="0"
-    />;
+  const inputElement = <input
+    type="text"
+    className="input-box"
+    onChange={event => props.updateInput(event, props.money)}
+    value={props.raiseValue.toString()}
+    placeholder="0"
+  />;
 
-    const renderWinnerElement = () => {
-      const { winner } = this.props;
-      switch (winner) {
-        case 'None':
-          return (<span className="hud-text"> Looks like a tie!</span>);
-        case this.props.player.get('id'):
-          return (<span className="hud-text"> Congratulations you win!</span>);
-        default:
-          return (<span className="hud-text"> So sorry! Opponent beat you :(</span>);
+  const renderWinnerElement = () => {
+    const { winner } = props;
+    switch (winner) {
+      case 'None':
+        return (<span className="hud-text"> Looks like a tie!</span>);
+      case props.player.get('id'):
+        return (<span className="hud-text"> Congratulations you win!</span>);
+      default:
+        return (<span className="hud-text"> So sorry! Opponent beat you :(</span>);
+    }
+  };
+
+  return (
+    <div className="playingCards simpleCards player-box">
+      {labelElement}<br/>
+      {handElement} <br/><br/>
+      {!raising && moneyElement}
+      {!props.waiting && raising && inputElement}
+      {!props.waiting && (raising || selecting) && nextButton}
+      {!props.waiting && !raising && !selecting && actionButton}
+      {!props.waiting && foldButton}
+      {props.waiting && !props.winner
+        && <span className="hud-text"> Waiting for opponent to play...</span>
       }
-    };
-
-    return (
-      <div className="playingCards simpleCards player-box">
-        {labelElement}<br/>
-        {handElement} <br/><br/>
-        {!raising && moneyElement}
-        {!this.props.waiting && raising && inputElement}
-        {!this.props.waiting && (raising || selecting) && nextButton}
-        {!this.props.waiting && !raising && !selecting && actionButton}
-        {!this.props.waiting && foldButton}
-        {this.props.waiting && !this.props.winner
-          && <span className="hud-text"> Waiting for opponent to play...</span>
-        }
-        {this.props.winner && renderWinnerElement()}
-      </div>
-    );
-  }
-}
+      {props.winner && renderWinnerElement()}
+    </div>
+  );
+};
 
 export default Player;
