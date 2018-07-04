@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import Player from './component';
+import Opponent from './component';
 
 const mapStateToProps = state => ({
   opponent: state.opponent,
@@ -7,4 +7,4 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({});
 
-export default connect(mapStateToProps, mapDispatchToProps)(Player);
+export default connect(mapStateToProps, mapDispatchToProps)(Opponent);

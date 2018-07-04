@@ -1,5 +1,5 @@
 import React from 'react';
-import Table from '../table/container';
+import Table from '../table/index';
 import '../../stylesheets/app.css';
 
 const Lobby = ({
