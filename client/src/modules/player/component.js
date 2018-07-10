@@ -72,9 +72,8 @@ const Player = (props) => {
 
   const renderWinnerElement = () => {
     const { winner } = props;
-    switch (winner) {
-      case 'None':
-        return (<span className="hud-text"> Looks like a tie!</span>);
+    if (winner.get('isTie')) return (<span className="hud-text"> Looks like a tie!</span>);
+    switch (winner.get('socketId')) {
       case props.player.get('id'):
         return (<span className="hud-text"> Congratulations you win!</span>);
       default:

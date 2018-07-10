@@ -1,5 +1,6 @@
 import { Map, List, fromJS } from 'immutable';
 import { Cards } from './poker';
+import findWinner from './winner';
 
 class Manager {
   constructor() {
@@ -35,7 +36,7 @@ class Manager {
           .update('clients', lst => lst.push(payload));
 
       case 'SHUFFLE_DECK':
-        return this.state.update('deck', deck => deck.sortBy(Math.random));
+        return this.state.update('deck', deck => deck.sortBy(Math.random)).set('deckIndex', 0);
 
       case 'DRAW_PLAYER_CARDS':
         return this.state
@@ -69,6 +70,32 @@ class Manager {
             .slice(this.state.get('deckIndex'), this.state.get('deckIndex') + payload.cards.length))))
           .update('deckIndex', val => val + payload.cards.length);
 
+      case 'FIND_WINNER':
+        const winnerIndex = findWinner(this.state.get('players').toJS());
+        const isTie = (winnerIndex === -1);
+
+        return this.state.set('winner', {
+          isTie,
+          index: (isTie) ? null : winnerIndex,
+          socketId: (isTie) ? null : this.state.getIn(['clients', winnerIndex]),
+        });
+
+      case 'GIVE_EARNINGS':
+        return this.state.updateIn(['players', this.state.get('winner').index], player => player
+          .update('money', money => money + parseInt(this.state.get('pot'), 10)));
+
+      case 'RETURN_BETS':
+        return this.state
+          .updateIn(['players', 0], player => player.update('money', money => money + player.bet))
+          .updateIn(['players', 1], player => player.update('money', money => money + player.bet));
+
+      case 'NEW_ROUND':
+        return this.state
+          .setIn(['players', 0, 'bet'], 0)
+          .setIn(['players', 0, 'bet'], 0)
+          .set('pot', 0)
+          .set('winner', null)
+          .set('roundTrips', 0);
 
       case 'RESET':
         return this.initialState;

@@ -17,6 +17,16 @@ export default {
       store.dispatch(opponent.updateState(data.opponent));
     });
 
+    socket.on('new_round', (data) => {
+      setTimeout(() => {
+        store.dispatch(player.resetState());
+        store.dispatch(opponent.resetState());
+        store.dispatch(table.updateState(data.table));
+        store.dispatch(player.updateState(data.player));
+        store.dispatch(opponent.updateState(data.opponent));
+      }, 5000);
+    });
+
     socket.on('joined', () => {
       store.dispatch(table.updateJoined(true));
     });

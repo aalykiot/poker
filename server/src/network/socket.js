@@ -46,6 +46,35 @@ class Socket {
 
         io.sockets.connected[manager.getState().clients[0]].emit('update_state', buildStateObject(manager.getState(), 0));
         io.sockets.connected[manager.getState().clients[1]].emit('update_state', buildStateObject(manager.getState(), 1));
+
+
+        if (manager.getState().roundTrips === 4) {
+          manager.execute('FIND_WINNER');
+
+          io.sockets.connected[manager.getState().clients[0]].emit('update_state', buildStateObject(manager.getState(), 0, true));
+          io.sockets.connected[manager.getState().clients[1]].emit('update_state', buildStateObject(manager.getState(), 1, true));
+
+
+          if (manager.getState().winner.isTie) {
+            manager.execute('RETURN_BETS');
+          } else {
+            manager.execute('GIVE_EARNINGS');
+          }
+
+          manager.execute('NEW_ROUND');
+          manager.execute('SHUFFLE_DECK');
+          manager.execute('DRAW_PLAYER_CARDS', {
+            index: 0,
+            waiting: false,
+          });
+          manager.execute('DRAW_PLAYER_CARDS', {
+            index: 1,
+            waiting: true,
+          });
+
+          io.sockets.connected[manager.getState().clients[0]].emit('new_round', buildStateObject(manager.getState(), 0));
+          io.sockets.connected[manager.getState().clients[1]].emit('new_round', buildStateObject(manager.getState(), 1));
+        }
       });
 
       socket.on('replace', (cards) => {
