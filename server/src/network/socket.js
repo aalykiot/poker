@@ -77,6 +77,25 @@ class Socket {
         }
       });
 
+      socket.on('fold', () => {
+        const index = manager.getState().clients.indexOf(socket.id);
+        manager.execute('PLAYER_FOLDS', { index });
+        manager.execute('NEW_ROUND');
+        manager.execute('SHUFFLE_DECK');
+        manager.execute('DRAW_PLAYER_CARDS', {
+          index: 0,
+          waiting: false,
+        });
+        manager.execute('DRAW_PLAYER_CARDS', {
+          index: 1,
+          waiting: true,
+        });
+        manager.execute('CHANGE_TURN_AFTER_FOLD', { index });
+
+        io.sockets.connected[manager.getState().clients[0]].emit('update_state', buildStateObject(manager.getState(), 0));
+        io.sockets.connected[manager.getState().clients[1]].emit('update_state', buildStateObject(manager.getState(), 1));
+      });
+
       socket.on('replace', (cards) => {
         const index = manager.getState().clients.indexOf(socket.id);
         manager.execute('REPLACE_CARDS', {

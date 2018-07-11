@@ -21,6 +21,8 @@ const Player = (props) => {
     }
   };
 
+  const fold = () => props.emit('fold');
+
   const manageCard = (index, selected) => {
     if (props.mode !== 'selecting') return;
     const limit = (hasAce(props.hand)) ? 4 : 3;
@@ -36,7 +38,7 @@ const Player = (props) => {
   const selecting = (props.mode === 'selecting');
 
   const nextButton = <button className="option-button" onClick={next}>Next</button>;
-  const foldButton = <button className="option-button">Fold</button>;
+  const foldButton = <button className="option-button" onClick={() => fold()}>Fold</button>;
 
   const actionButton = (props.mode === 'idle' && props.bet > 0) ? (
     <button className="option-button" onClick={() => changeModeTo('selecting')}>Select</button>

@@ -80,6 +80,14 @@ class Manager {
           socketId: (isTie) ? null : this.state.getIn(['clients', winnerIndex]),
         });
 
+      case 'PLAYER_FOLDS':
+        return this.state.setIn(['players', payload.index, 'bet'], 0)
+          .updateIn(['players', Math.abs(payload.index - 1)], player => player.update('money', money => money + parseInt(this.state.get('pot'), 10)));
+
+      case 'CHANGE_TURN_AFTER_FOLD':
+        return this.state.setIn(['players', payload.index, 'waiting'], true)
+          .setIn(['players', Math.abs(payload.index - 1), 'waiting'], false);
+
       case 'GIVE_EARNINGS':
         return this.state.updateIn(['players', this.state.get('winner').index], player => player
           .update('money', money => money + parseInt(this.state.get('pot'), 10)));
@@ -92,7 +100,7 @@ class Manager {
       case 'NEW_ROUND':
         return this.state
           .setIn(['players', 0, 'bet'], 0)
-          .setIn(['players', 0, 'bet'], 0)
+          .setIn(['players', 1, 'bet'], 0)
           .set('pot', 0)
           .set('winner', null)
           .set('roundTrips', 0);
