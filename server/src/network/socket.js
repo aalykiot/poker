@@ -1,5 +1,6 @@
 import buildStateObject from '../util/builder';
 import Manager from '../util/manager';
+import isGameOver from '../util/gameover';
 
 class Socket {
   static create(io) {
@@ -60,6 +61,8 @@ class Socket {
           } else {
             manager.execute('GIVE_EARNINGS');
           }
+
+          if (isGameOver(manager.getState())) manager.execute('RESET_TABLE');
 
           manager.execute('NEW_ROUND');
           manager.execute('SHUFFLE_DECK');

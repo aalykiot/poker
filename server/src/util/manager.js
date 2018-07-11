@@ -97,6 +97,9 @@ class Manager {
           .updateIn(['players', 0], player => player.update('money', money => money + player.bet))
           .updateIn(['players', 1], player => player.update('money', money => money + player.bet));
 
+      case 'RESET_TABLE':
+        return this.state.setIn(['players', 0, 'money'], 1500).setIn(['players', 1, 'money'], 1500);
+
       case 'NEW_ROUND':
         return this.state
           .setIn(['players', 0, 'bet'], 0)
