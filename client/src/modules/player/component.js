@@ -9,7 +9,7 @@ const Player = (props) => {
 
   const next = () => {
     if (props.mode === 'raising') {
-      if (props.raiseValue === 0) return;
+      if (props.raiseValue === 0 && props.money > 0) return;
       props.emit('bet', props.raiseValue);
       props.clearValue();
       props.dispatch(props.wait());
